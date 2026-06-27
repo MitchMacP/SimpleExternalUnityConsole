@@ -1,0 +1,58 @@
+﻿<Window x:Class="SimpleExternalUnityConsole.View.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:local="clr-namespace:SimpleExternalUnityConsole.View"
+        mc:Ignorable="d"
+        Title="Settings" Height="345" MaxWidth="400" 
+        d:DesignWidth="400"
+        ResizeMode="NoResize"
+        Background="#2A2A2A">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/SharedResource.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid Margin="20, 5, 20, 20">
+        <StackPanel>
+            <TextBlock Text="About" Style="{StaticResource SettingsHeader}"/>
+            <Border Style="{StaticResource SettingsAboutText}">
+                <TextBlock HorizontalAlignment="Left" 
+                               Text="This program is a lightweight, standalone development tool designed to capture, stream, and analyse debug logs from built Unity games in real time. Using BepInEx, this tool modifies a Unity build on launch, allowing both the programs to communicate. " 
+                               TextWrapping="Wrap"
+                               VerticalAlignment="Top" 
+                               Margin="10" 
+                               TextAlignment="Justify"
+                               Foreground="#EEEEEE"/>
+            </Border>
+            <TextBlock Text="Settings" Style="{StaticResource SettingsHeader}"/>
+
+            <Border Style="{StaticResource SettingsAboutText}" Margin="50,0,50,0" Padding="15,10,15,10">
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="Max Logs" Foreground="#EEEEEE" Margin="0,0,10,0" Grid.Column="0" />
+                    <TextBox x:Name="MaxLogsInput" 
+                         Grid.Column="1"
+                         MaxLines="1" Width="75"
+                         HorizontalAlignment="Right" 
+                         VerticalAlignment="Center"
+                         TextAlignment="Right"
+                         Validation.ErrorTemplate="{StaticResource validationTemplate}"
+                         Text="{Binding MaxLogs, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnExceptions=True}" />
+                </Grid>
+            </Border>
+        </StackPanel>
+        
+    </Grid>
+</Window>

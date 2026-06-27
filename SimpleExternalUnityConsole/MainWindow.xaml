@@ -1,0 +1,135 @@
+﻿<Window x:Class="SimpleExternalUnityConsole.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="clr-namespace:Microsoft.Xaml.Behaviors;assembly=Microsoft.Xaml.Behaviors"
+        xmlns:local="clr-namespace:SimpleExternalUnityConsole"
+        xmlns:vm="clr-namespace:SimpleExternalUnityConsole.ModelView"
+        mc:Ignorable="d"
+        Title="{Binding ApplicationTitle}" MinHeight="450" MinWidth="800" Height="450" Width="800"
+        Background="#191919">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/SharedResource.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Closing">
+            <i:InvokeCommandAction Command="{Binding WindowClosingCommand}"
+                                   PassEventArgsToCommand="True"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
+    <Grid Margin="25">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition MinHeight="125" Height="*"/>
+            <RowDefinition MinHeight="125" Height="*"/>
+            <RowDefinition MinHeight="30" Height="auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Margin="0,0,0,15">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Orientation="Horizontal" Grid.Column="0">
+                <TextBlock Text="{Binding ConnectionStatusText}" VerticalAlignment="Center" Foreground="White"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Column="1">
+                <Button Template="{StaticResource ButtonTemplate}" Padding="5" Content="Play" Command="{Binding LookForGameCommand}" />
+            </StackPanel>
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <StackPanel Orientation="Horizontal" Grid.Column="0">
+                <Button Template="{StaticResource ClearButtonTemplate}" Content="Clear" Command="{Binding ClearConsoleCommand}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right">
+                <ToggleButton Template="{StaticResource ToggleButtonTemplate}" 
+                              IsChecked="{Binding ShowLogs, Mode=TwoWay}" 
+                              IsEnabled="True">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/Icons/LogIcon.png" Width="16" Height="16" Margin="0,0,2,0"/>
+                        <TextBlock Foreground="White" Text="{Binding LogCount}" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </ToggleButton>
+                <ToggleButton Template="{StaticResource ToggleButtonTemplate}" IsChecked="{Binding ShowWarnings, Mode=TwoWay}" IsEnabled="True">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/Icons/WarningIcon.png" Width="16" Height="16" Margin="0,0,2,0"/>
+                        <TextBlock Foreground="White" Text="{Binding WarningCount}" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </ToggleButton>
+                <ToggleButton Template="{StaticResource ToggleButtonTemplate}" IsChecked="{Binding ShowErrors, Mode=TwoWay}" IsEnabled="True">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/Icons/ErrorIcon.png" Width="16" Height="16" Margin="0,0,2,0"/>
+                        <TextBlock Foreground="White" Text="{Binding ErrorCount}" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </ToggleButton>
+            </StackPanel>
+        </Grid>
+
+        <Grid Grid.Row="2">
+            <ListBox x:Name="LogListBox" 
+             ItemsSource="{Binding FilteredLogs}"
+             Template="{StaticResource ListBoxTemplate}"
+             ItemContainerStyle="{StaticResource UnityConsoleItemStyle}"
+             AlternationCount="2"
+             SelectedItem="{Binding SelectedLogEntry, Mode=TwoWay}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal" Margin="2">
+                            <Image x:Name="LogIcon" Width="16" Height="16" Margin="0,0,6,0"/>
+                            <TextBlock Text="{Binding Condition}" VerticalAlignment="Center" FontSize="13" Foreground="White"/>
+                        </StackPanel>
+
+                        <DataTemplate.Triggers>
+                            <DataTrigger Binding="{Binding LogType}" Value="Log">
+                                <Setter TargetName="LogIcon" Property="Source" Value="/Icons/LogIcon.png"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding LogType}" Value="Warning">
+                                <Setter TargetName="LogIcon" Property="Source" Value="/Icons/WarningIcon.png"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding LogType}" Value="Error">
+                                <Setter TargetName="LogIcon" Property="Source" Value="/Icons/ErrorIcon.png"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding LogType}" Value="Exception">
+                                <Setter TargetName="LogIcon" Property="Source" Value="/Icons/ErrorIcon.png"/>
+                            </DataTrigger>
+                        </DataTemplate.Triggers>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+        </Grid>
+
+        <Border Grid.Row="3">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <TextBox Style="{StaticResource UnityInspectorTextBox}"
+                         Text="{Binding StackTraceText, Mode=OneWay}" 
+                         IsReadOnly="True"
+                         Foreground="White" 
+                         TextWrapping="Wrap" />
+            </ScrollViewer>
+        </Border>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="4" Margin="0,5,0,0">
+            <Button Content="Settings" Template="{StaticResource ButtonTemplate}" Margin="0,0,5,0" Command="{Binding OpenSettingsCommand}" />
+            <Button Content="Export" Template="{StaticResource ButtonTemplate}" Command="{Binding ExportLogsCommand}" />
+        </StackPanel>
+    </Grid>
+</Window>
