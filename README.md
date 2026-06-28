@@ -22,7 +22,7 @@ Before you begin, ensure you have the following installed on your machine:
 Run the following commands in your terminal or command prompt to clone the repository and move into the project directory:
 
 ```bash
-   git clone https://github.com/MitchMacP/SimpleExternalUnityConsole
+   git clone https://github.com/MitchMacP/SimpleExternalUnityConsole.git
    cd SimpleExternalUnityConsole
 ```
     
